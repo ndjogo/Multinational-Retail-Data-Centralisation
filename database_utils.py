@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 import pandas as pd
 import datetime
 
+
 class DatabaseConnector():
     def __init__(self, cred_file = 'db_creds.yaml'): 
         self.cred_file = cred_file 
@@ -58,14 +59,11 @@ class DatabaseConnector():
         cred = self.read_db_creds()
         db_url = f'mysql+mysqlconnector://{cred["RDS_USER"]}:{cred["RDS_PASSWORD"]}@{cred["RDS_HOST"]}/{cred["RDS_DATABASE"]}'
         engine = create_engine(db_url)
-        pd_dataframe.to_sql('dim_user',con = engine, if_exists = 'append', index = False)
+        pd_dataframe.to_sql('dim_users',con = engine, if_exists = 'append', index = False)
 
 
 
-if __name__ == '__main__':
-    database_connector = DatabaseConnector()
-    database_connector.list_db_tables()
-    database_connector.upload_to_db_2(pd.DataFrame([['111111111', datetime.date(1990,3,10), 'barclays', datetime.date(1995,3,10)]],columns = ['card_number', 'expiry_date', 'card_provider', 'date_payment_confirmed']))
+
     
 
 
