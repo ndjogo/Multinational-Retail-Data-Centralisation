@@ -33,23 +33,23 @@ class DatabaseConnector():
         for row in cursor:
             print(row)
     
-    def upload_to_db(self, pd_dataframe):
-        cred = self.read_db_creds()
-        db_url = f'mysql+mysqlconnector://{cred["RDS_USER"]}:{cred["RDS_PASSWORD"]}@{cred["RDS_HOST"]}/{cred["RDS_DATABASE"]}'
-        engine = create_engine(db_url)
-        data_columns = pd_dataframe.columns
-        with engine.connect() as connection:
-            connection.execute(f"""CREATE TABLE IF NOT EXISTS dim_users(
-                               {data_columns[0]} VARCHAR(100),
-                                 {data_columns[1]} DATE,
-                                   {data_columns[2]} VARCHAR(100),
-                                     {data_columns[3]} DATE)""")
+    # def upload_to_db(self, pd_dataframe):
+    #     cred = self.read_db_creds()
+    #     db_url = f'mysql+mysqlconnector://{cred["RDS_USER"]}:{cred["RDS_PASSWORD"]}@{cred["RDS_HOST"]}/{cred["RDS_DATABASE"]}'
+    #     engine = create_engine(db_url)
+    #     data_columns = pd_dataframe.columns
+    #     with engine.connect() as connection:
+    #         connection.execute(f"""CREATE TABLE IF NOT EXISTS dim_users(
+    #                            {data_columns[0]} VARCHAR(100),
+    #                              {data_columns[1]} DATE,
+    #                                {data_columns[2]} VARCHAR(100),
+    #                                  {data_columns[3]} DATE)""")
     
-    def upload_to_db_2(self, pd_dataframe):
+    def upload_to_db_2(self, pd_dataframe, table_name):
         connection = self.init_db_engine() 
         cursor = connection.cursor() 
         data_columns = pd_dataframe.columns
-        cursor.execute(f"""CREATE TABLE IF NOT EXISTS dim_users(
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table_name}(
                                {data_columns[0]} VARCHAR(100),
                                  {data_columns[1]} DATE,
                                    {data_columns[2]} VARCHAR(100),
@@ -59,7 +59,7 @@ class DatabaseConnector():
         cred = self.read_db_creds()
         db_url = f'mysql+mysqlconnector://{cred["RDS_USER"]}:{cred["RDS_PASSWORD"]}@{cred["RDS_HOST"]}/{cred["RDS_DATABASE"]}'
         engine = create_engine(db_url)
-        pd_dataframe.to_sql('dim_users',con = engine, if_exists = 'append', index = False)
+        pd_dataframe.to_sql(table_name,con = engine, if_exists = 'append', index = False)
 
 
 
