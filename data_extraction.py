@@ -54,10 +54,11 @@ class DataExtractor():
         store_numbers = self.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores')
         df = pd.DataFrame()
         for store_number in range(store_numbers): 
-            end_point = end_point.replace('{store_number}', str(store_number))
-            response = requests.get(end_point, headers = self.header_dict)
+            store_point_i = end_point.replace('{store_number}', str(store_number))
+            response = requests.get(store_point_i, headers = self.header_dict)
             store_data = response.json() 
             df = pd.concat([df, pd.DataFrame(store_data, index = [0])], ignore_index = True)
+        df.set_index('index', drop = True, inplace= True)
         return df
         
 
@@ -84,6 +85,6 @@ class DataExtractor():
 if __name__ == '__main__':
     database_connector = DatabaseConnector()
     extractor = DataExtractor('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
-    data_frame = extractor.extract_pdf()
+    data_frame = extractor.retrieve_pdf_data()
     database_connector.list_db_tables()
     database_connector.upload_to_db_2(data_frame, 'dim_users')

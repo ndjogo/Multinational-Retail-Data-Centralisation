@@ -5,6 +5,20 @@ import pandas as pd
 import datetime
 
 
+def get_type(col_type):
+    if 'str' in str(col_type):
+        return 'VARCHAR(225)'
+    elif 'float' in str(col_type):
+        return 'FLOAT'
+    elif 'int' in str(col_type): 
+        return 'INT'
+    elif 'date' in str(col_type):
+        return 'DATE'
+    else: 
+        return 'VARCHAR(225)'
+    
+
+
 class DatabaseConnector():
     def __init__(self, cred_file = 'db_creds.yaml'): 
         self.cred_file = cred_file 
@@ -45,10 +59,17 @@ class DatabaseConnector():
     #                                {data_columns[2]} VARCHAR(100),
     #                                  {data_columns[3]} DATE)""")
     
+    
+    
     def upload_to_db_2(self, pd_dataframe, table_name):
         connection = self.init_db_engine() 
         cursor = connection.cursor() 
         data_columns = pd_dataframe.columns
+        insert_query = f'CREATE TABLE IF NOT EXISTS {table_name}('
+        for col in data_columns:
+            insert_query += f'{col} {get_type(type(pd_dataframe[col].iloc[0]))},'
+        insert_query = insert_query[:-1] + ')'
+        print(insert_query)
         cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table_name}(
                                {data_columns[0]} VARCHAR(100),
                                  {data_columns[1]} DATE,
