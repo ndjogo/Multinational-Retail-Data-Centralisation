@@ -70,11 +70,7 @@ class DatabaseConnector():
             insert_query += f'{col} {get_type(type(pd_dataframe[col].iloc[0]))},'
         insert_query = insert_query[:-1] + ')'
         print(insert_query)
-        cursor.execute(f"""CREATE TABLE IF NOT EXISTS {table_name}(
-                               {data_columns[0]} VARCHAR(100),
-                                 {data_columns[1]} DATE,
-                                   {data_columns[2]} VARCHAR(100),
-                                     {data_columns[3]} DATE)""")
+        cursor.execute(insert_query)
         cursor.close()
         
         cred = self.read_db_creds()

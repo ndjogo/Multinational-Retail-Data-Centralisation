@@ -17,7 +17,7 @@ def to_date(x):
 
 
 class DataExtractor():
-    def __init__(self, pdf_url):
+    def __init__(self, pdf_url = None):
         self.pdf_url = pdf_url
         self.header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX' }
         
