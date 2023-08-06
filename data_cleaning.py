@@ -3,6 +3,7 @@ import datetime
 from database_utils import DatabaseConnector
 from data_extraction import DataExtractor
 import boto3
+import yaml
 
 def clean_questionmark(x):
     try:
@@ -28,10 +29,49 @@ def convert_to_num(x, type_1):
         return type_1(x) 
     except: 
         return None 
-    
+
+
+def clean_money(x):
+    if type(x) == float:
+        return x 
+    if '£' in x: 
+        return float(x.replace('£', ''))
+    else: 
+        return None 
+
+def clean_weights(x):
+    if type(x) == float:
+        return x 
+    elif 'kg' in x:
+        return float(x.replace('kg', ''))*1000
+    elif 'ml' in x: 
+        return float(x.replace('ml', ''))
+    elif x.isnumeric():
+        return float(x)   
+    elif 'g' in x:
+        if 'x' in x:
+            x = x.replace('g', '').replace(' ', '')
+            x = x.split('x')
+            result = 1 
+            for item in x: 
+                result = result * float(item)
+            return result 
+        return float(x.replace('g', '').replace(' ', ''))
+    elif 'oz' in x:
+        return float(x.replace('oz', ''))*28.35
+    else: 
+        print(x) 
+        return None
+
 
 
 class DataCleaning():
+    def read_s3_creds():
+        print('reading credentials...')
+        with open('db_creds.yaml') as file:
+            cred = yaml.safe_load(file)
+        return cred
+    
     def clean_card_data(card_data):
         card_data['card_number'] = card_data['card_number'].apply(clean_questionmark)
         card_data.loc[card_data['card_provider'] == 'NULL', 'card_provider'] = None
@@ -51,8 +91,23 @@ class DataCleaning():
         df_stores.dropna(inplace = True)
         return df_stores 
 
+    def convert_product_weights(df):
+        df['weight'] = df['weight'].apply(clean_weights)
+        return df
 
-
+    def clean_products_data(df):
+        df['product_price'] = df['product_price'].apply(clean_money)
+        df['date_added'] = df['date_added'].apply(date_format)
+        df.dropna(inplace = True)
+        return df
+    
+    def extract_from_s3(path = 's3://data-handling-public/products.csv'): 
+        bucket = path.split('/')[-2]
+        key = path.split('/')[-1]
+        cred = DataCleaning.read_s3_creds()
+        s3 = boto3.client('s3', region_name = 'eu-west-1', aws_access_key_id = cred['aws_access_key_id'], aws_secret_access_key = cred['aws_secret_access_key'])
+        obj = s3.get_object(Bucket = bucket, Key =  key)
+        return pd.read_csv(obj['Body'], index_col = 0) 
 
 
 
@@ -60,6 +115,13 @@ class DataCleaning():
 if __name__ == '__main__':
     database_connector = DatabaseConnector()
     extractor = DataExtractor()
-    data_frame = DataCleaning.clean_store_data(extractor)
+    # data_frame = DataCleaning.clean_store_data(extractor)
+    # database_connector.list_db_tables()
+    # database_connector.upload_to_db_2(data_frame, 'dim_store_details')
+    df_products = DataCleaning.extract_from_s3()
+    df_products = DataCleaning.convert_product_weights(df_products)
+    df_products = DataCleaning.clean_products_data(df_products)
     database_connector.list_db_tables()
-    database_connector.upload_to_db_2(data_frame, 'dim_store_details')
+    database_connector.upload_to_db_2(df_products, 'dim_products')
+
+
