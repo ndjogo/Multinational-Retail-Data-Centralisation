@@ -61,6 +61,15 @@ class DataExtractor():
         df.set_index('index', drop = True, inplace= True)
         return df
         
+    def read_rds_tables_postgress(self, connector):
+        connection = connector.init_db_engine() 
+        table_name = input("Input the name of the table you require: ")
+        query = f"SELECT * FROM {table_name}"
+        table_data = pd.read_sql(query, connection)
+        return table_data
+
+
+
 
 
 
@@ -87,4 +96,4 @@ if __name__ == '__main__':
     extractor = DataExtractor('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
     data_frame = extractor.retrieve_pdf_data()
     database_connector.list_db_tables()
-    database_connector.upload_to_db_2(data_frame, 'dim_users')
+    # database_connector.upload_to_db_2(data_frame, 'dim_users')
