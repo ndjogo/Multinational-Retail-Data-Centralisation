@@ -90,6 +90,15 @@ class DataCleaning():
             df_stores[col] = df_stores[col].replace({'N/A': None})
         df_stores.dropna(inplace = True)
         return df_stores 
+    
+    def clean_user_data(df_users):
+        df_users['address'] = df_users['address'].apply(lambda x: x.replace('\n', ' '))
+        df_users['date_of_birth']= df_users['date_of_birth'].apply(date_format)
+        df_users['join_date']= df_users['join_date'].apply(date_format)
+        for col in df_users.columns: 
+            df_users[col] = df_users[col].replace({'N/A': None})
+        df_users.dropna(inplace = True)
+        return df_users 
 
     def convert_product_weights(df):
         df['weight'] = df['weight'].apply(clean_weights)
