@@ -66,6 +66,7 @@ class DataExtractor():
         table_name = input("Input the name of the table you require: ")
         query = f"SELECT * FROM {table_name}"
         table_data = pd.read_sql(query, connection)
+        connection.close()
         return table_data
 
 
