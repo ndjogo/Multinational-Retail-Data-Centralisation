@@ -100,6 +100,11 @@ class DataCleaning():
         df_users.dropna(inplace = True)
         return df_users 
 
+    def clean_orders_data(df_tables):
+        df_tables = df_tables.drop(['first_name', 'last_name','index', '1'], axis = 1)
+        return df_tables
+
+
     def convert_product_weights(df):
         df['weight'] = df['weight'].apply(clean_weights)
         return df
