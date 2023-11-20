@@ -135,7 +135,8 @@ if __name__ == '__main__':
     df_products = DataCleaning.extract_from_s3()
     df_products = DataCleaning.convert_product_weights(df_products)
     df_products = DataCleaning.clean_products_data(df_products)
-    database_connector.list_db_tables()
-    database_connector.upload_to_db_2(df_products, 'dim_products')
+    print(df_products.removed.unique())
+    # database_connector.list_db_tables()
+    # database_connector.upload_to_db_2(df_products, 'dim_products')
 
 
