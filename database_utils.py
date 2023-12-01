@@ -12,7 +12,7 @@ def get_type(col_type):
     elif 'float' in str(col_type):
         return 'FLOAT'
     elif 'int' in str(col_type): 
-        return 'INT'
+        return 'VARCHAR(225)'
     elif 'date' in str(col_type):
         return 'DATE'
     else: 
