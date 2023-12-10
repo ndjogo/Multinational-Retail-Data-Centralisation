@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 from database_utils import DatabaseConnector
-from data_extraction import DataExtractor
+# from data_extraction import DataExtractor
 import boto3
 import yaml
 
@@ -74,8 +74,8 @@ class DataCleaning():
     
     def clean_card_data(card_data):
         card_data['card_number'] = card_data['card_number'].apply(clean_questionmark)
-        card_data.loc[card_data['card_provider'] == 'NULL', 'card_provider'] = None
-        return card_data.dropna()
+        # card_data.loc[card_data['card_provider'] == 'NULL', 'card_provider'] = None
+        return card_data.dropna(subset = ['card_number'])
     
     def clean_store_data(extractor):
         df_stores = extractor.retrieve_stores_data('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}')
@@ -112,7 +112,7 @@ class DataCleaning():
     def clean_products_data(df):
         df['product_price'] = df['product_price'].apply(clean_money)
         df['date_added'] = df['date_added'].apply(date_format)
-        df.dropna(inplace = True)
+        df.dropna(subset = ['product_code'], inplace = True)
         return df
     
     def extract_from_s3(path = 's3://data-handling-public/products.csv'): 
@@ -128,7 +128,7 @@ class DataCleaning():
 
 if __name__ == '__main__':
     database_connector = DatabaseConnector()
-    extractor = DataExtractor()
+    # extractor = DataExtractor()
     # data_frame = DataCleaning.clean_store_data(extractor)
     # database_connector.list_db_tables()
     # database_connector.upload_to_db_2(data_frame, 'dim_store_details')
@@ -137,6 +137,6 @@ if __name__ == '__main__':
     df_products = DataCleaning.clean_products_data(df_products)
     print(df_products.removed.unique())
     # database_connector.list_db_tables()
-    # database_connector.upload_to_db_2(df_products, 'dim_products')
+    database_connector.upload_to_db_2(df_products, 'dim_products')
 
 

@@ -1,4 +1,5 @@
 from database_utils import DatabaseConnector
+from data_cleaning import DataCleaning
 import pandas as pd
 import tabula
 import datetime
@@ -96,5 +97,6 @@ if __name__ == '__main__':
     database_connector = DatabaseConnector()
     extractor = DataExtractor('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
     data_frame = extractor.retrieve_pdf_data()
+    data_frame = DataCleaning.clean_card_data(data_frame)
     database_connector.list_db_tables()
-    # database_connector.upload_to_db_2(data_frame, 'dim_users')
+    database_connector.upload_to_db_2(data_frame, 'dim_card_details')
