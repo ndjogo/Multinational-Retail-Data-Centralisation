@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 from database_utils import DatabaseConnector
-# from data_extraction import DataExtractor
+from data_extraction import DataExtractor
 import boto3
 import yaml
 
@@ -81,14 +81,16 @@ class DataCleaning():
         df_stores = extractor.retrieve_stores_data('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}')
         df_stores.drop('lat', inplace = True, axis = 1)
         df_stores.drop(447, inplace= True)
+        print(df_stores.dtypes)
         df_stores['address'] = df_stores['address'].apply(lambda x: x.replace('\n', ' '))
         df_stores['longitude'] = df_stores['longitude'].apply(convert_to_num, type_1 = float)
         df_stores['latitude'] = df_stores['latitude'].apply(convert_to_num, type_1 = float)
         df_stores['staff_numbers'] = df_stores['staff_numbers'].apply(convert_to_num, type_1 = int)
         df_stores['opening_date']= df_stores['opening_date'].apply(date_format)
         for col in df_stores.columns: 
-            df_stores[col] = df_stores[col].replace({'N/A': None})
-        df_stores.dropna(inplace = True)
+            df_stores[col] = df_stores[col].replace({'N/A': None, 'NULL': None})
+        df_stores.dropna(inplace = True, subset = ['store_code'])
+        print(df_stores.isna().sum())
         return df_stores 
     
     def clean_user_data(df_users):
@@ -96,8 +98,8 @@ class DataCleaning():
         df_users['date_of_birth']= df_users['date_of_birth'].apply(date_format)
         df_users['join_date']= df_users['join_date'].apply(date_format)
         for col in df_users.columns: 
-            df_users[col] = df_users[col].replace({'N/A': None})
-        df_users.dropna(inplace = True)
+            df_users[col] = df_users[col].replace({'N/A': None, 'NULL': None})
+        df_users.dropna(inplace = True, subset = ['user_uuid'])
         return df_users 
 
     def clean_orders_data(df_tables):
@@ -128,15 +130,15 @@ class DataCleaning():
 
 if __name__ == '__main__':
     database_connector = DatabaseConnector()
-    # extractor = DataExtractor()
-    # data_frame = DataCleaning.clean_store_data(extractor)
+    extractor = DataExtractor()
+    data_frame = DataCleaning.clean_store_data(extractor)
+    database_connector.list_db_tables()
+    database_connector.upload_to_db_2(data_frame, 'dim_store_details')
+    # df_products = DataCleaning.extract_from_s3()
+    # df_products = DataCleaning.convert_product_weights(df_products)
+    # df_products = DataCleaning.clean_products_data(df_products)
+    # print(df_products.removed.unique())
     # database_connector.list_db_tables()
-    # database_connector.upload_to_db_2(data_frame, 'dim_store_details')
-    df_products = DataCleaning.extract_from_s3()
-    df_products = DataCleaning.convert_product_weights(df_products)
-    df_products = DataCleaning.clean_products_data(df_products)
-    print(df_products.removed.unique())
-    # database_connector.list_db_tables()
-    database_connector.upload_to_db_2(df_products, 'dim_products')
+    # database_connector.upload_to_db_2(df_products, 'dim_products')
 
 
