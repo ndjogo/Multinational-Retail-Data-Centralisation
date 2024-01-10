@@ -77,6 +77,13 @@ class DataCleaning():
         # card_data.loc[card_data['card_provider'] == 'NULL', 'card_provider'] = None
         return card_data.dropna(subset = ['card_number'])
     
+    def clean_country_code(country_code):
+        if len(country_code) > 4:
+            return None
+        else:
+            return country_code 
+    
+    
     def clean_store_data(extractor):
         df_stores = extractor.retrieve_stores_data('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}')
         df_stores.drop('lat', inplace = True, axis = 1)
@@ -87,6 +94,7 @@ class DataCleaning():
         df_stores['latitude'] = df_stores['latitude'].apply(convert_to_num, type_1 = float)
         df_stores['staff_numbers'] = df_stores['staff_numbers'].apply(convert_to_num, type_1 = int)
         df_stores['opening_date']= df_stores['opening_date'].apply(date_format)
+        df_stores['country_code'] = df_stores['country_code'].apply(clean_country_code)
         for col in df_stores.columns: 
             df_stores[col] = df_stores[col].replace({'N/A': None, 'NULL': None})
         df_stores.dropna(inplace = True, subset = ['store_code'])
