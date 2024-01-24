@@ -13,6 +13,8 @@ def get_type(col_type):
         return 'FLOAT'
     elif 'int' in str(col_type): 
         return 'VARCHAR(225)'
+    elif 'time' in str(col_type):
+        return 'DATETIME'
     elif 'date' in str(col_type):
         return 'DATE'
     else: 

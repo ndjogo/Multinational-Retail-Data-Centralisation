@@ -14,9 +14,13 @@ def convert_time(x):
 link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json'
 
 date_data = pd.read_json(link)
-
+date_data.to_csv('test_timestamp.csv')
 
 date_data['timestamp'] = pd.to_datetime(date_data['timestamp'].apply(convert_time)).dt.time
+date_data.to_csv('test_timestamp_updated.csv')
+
+print(type(date_data['timestamp'].iloc[0]))
+
 
 date_data['month'] = date_data['month'].apply(convert_to_num, type_1 = int)
 date_data['year'] = date_data['year'].apply(convert_to_num, type_1 = int)
