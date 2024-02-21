@@ -239,3 +239,30 @@ python date_data_upload.py
 
 The script will retrieve data from the specified JSON file link, preprocess it, and upload it to the database. 
 
+### Aicore Data Extraction Python Script
+
+The Python script `extract_aicore_data.py` orchestrates the extraction, cleaning, and uploading of data from a PostgreSQL database to a MySQL database. Here's a breakdown of the code:
+
+#### Importing Modules
+- The script imports all necessary modules for data extraction, cleaning, and database interaction.
+
+#### Main Function
+1. **Extracting and Cleaning Data**:
+    - An instance of `DatabaseConnector_postgres` is created to interact with the PostgreSQL database.
+    - Existing tables in the PostgreSQL database are listed using the `list_db_tables` method.
+    - Data is extracted from the specified table using the `read_rds_tables_postgress` method of the `DataExtractor` class. Only relevant columns are selected using `.iloc[:,1:]`.
+    - Data cleaning is performed using the `clean_orders_data` method of the `DataCleaning` class to prepare the data for uploading.
+
+2. **Uploading Data**:
+    - An instance of `DatabaseConnector` is created to interact with the MySQL database.
+    - Existing tables in the MySQL database are listed using the `list_db_tables` method.
+    - The cleaned DataFrame `table_data` is uploaded to the MySQL database with the table name 'orders_table' using the `upload_to_db_2` method of the `DatabaseConnector` class.
+
+### Running the Script
+To execute the script, ensure that all necessary dependencies are installed. Additionally, ensure that the required database connections and credentials are properly configured and accessible.
+
+```python
+python extract_aicore_data.py
+```
+
+The script will extract data from the PostgreSQL database, clean it, and upload it to the MySQL database. 
