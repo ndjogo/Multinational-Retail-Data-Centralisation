@@ -4,6 +4,8 @@ import pandas as pd
 import tabula
 import datetime
 import requests 
+import yaml 
+
 
 def to_date(x):
     try:
@@ -20,7 +22,9 @@ def to_date(x):
 class DataExtractor():
     def __init__(self, pdf_url = None):
         self.pdf_url = pdf_url
-        self.header_dict = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX' }
+        with open('db_creds_2.yaml') as file:
+            cred = yaml.safe_load(file)
+        self.header_dict = {'x-api-key': cred['API_KEY'] }
         
     def read_rds_table(self, database_connector, table_name):
         connection = database_connector.init_db_engine()
