@@ -133,4 +133,41 @@ To execute the script, ensure that all necessary dependencies are installed and 
 python data_cleaning.py
 ```
 
-Ensure that the `db_creds.yaml` file containing AWS credentials is available in the same directory as the script.
+### Data Extraction Python Script
+
+The Python script `data_extraction.py` is responsible for extracting data from various sources, including PDF files and API endpoints. Here's a breakdown of the code:
+
+#### Importing Libraries
+- The script imports necessary libraries such as `pandas`, `tabula`, `datetime`, `requests`, and `yaml` for data extraction and handling.
+
+#### DataExtractor Class
+- This class contains methods for extracting data from different sources:
+
+1. `__init__(self, pdf_url=None)`: Initializes the DataExtractor object with an optional PDF URL and reads API credentials from a YAML file (`db_creds_2.yaml`).
+
+2. `to_date(self, x)`: Converts a date string `x` into a `datetime.date` object.
+
+3. `read_rds_table(self, database_connector, table_name)`: Reads data from a specified table in the RDS database using the provided `DatabaseConnector` object.
+
+4. `retrieve_pdf_data(self)`: Retrieves data from a PDF file specified by the `pdf_url`. It uses `tabula` to read tables from PDF pages, converts date formats, and returns a DataFrame.
+
+5. `list_number_of_stores(self, end_point)`: Retrieves the number of stores from a specified API endpoint using a GET request.
+
+6. `retrieve_stores_data(self, end_point)`: Retrieves store data from multiple API endpoints by iterating over store numbers, sending GET requests, and concatenating the results into a DataFrame.
+
+7. `read_rds_tables_postgress(self, connector)`: Reads data from a specified table in the PostgreSQL database using the provided `DatabaseConnector` object.
+
+#### Main Function (Commented Out)
+- The main block contains commented-out code that demonstrates how to use the `DatabaseConnector` and `DataExtractor` objects to retrieve, clean, and upload data to the database.
+
+### Running the Script
+To execute the script, ensure that all necessary dependencies are installed and provide appropriate input data paths or API endpoints. Uncomment the desired code blocks in the main function to run specific functionalities.
+
+```python
+python data_extraction.py
+```
+
+
+
+
+
