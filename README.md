@@ -167,6 +167,44 @@ To execute the script, ensure that all necessary dependencies are installed and 
 python data_extraction.py
 ```
 
+### Database Utility Python Script
+
+The Python script `database_utils.py` provides utility functions to interact with databases, including MySQL and PostgreSQL. Below is an explanation of the code:
+
+#### Importing Libraries
+- The script imports necessary libraries such as `yaml`, `mysql.connector`, `psycopg2`, `pandas`, `datetime`, and `sqlalchemy` for database connection and management.
+
+#### DatabaseConnector Class (MySQL)
+- This class contains methods for interacting with a MySQL database:
+
+1. `__init__(self, cred_file='db_creds.yaml')`: Initializes the DatabaseConnector object with an optional credentials file (`db_creds.yaml` by default).
+
+2. `read_db_creds(self)`: Reads database credentials from the specified credentials file.
+
+3. `init_db_engine(self)`: Initializes a connection to the MySQL database using the credentials read from the file.
+
+4. `list_db_tables(self)`: Retrieves and prints the names of existing tables in the connected MySQL database.
+
+5. `upload_to_db_2(self, pd_dataframe, table_name)`: Creates a new table in the database with the specified name if it doesn't exist and uploads the DataFrame `pd_dataframe` to the table.
+
+#### DatabaseConnector_postgres Class (PostgreSQL)
+- This class contains similar methods as the DatabaseConnector class but is tailored for PostgreSQL databases:
+
+1. `__init__(self, cred_file='db_creds_2.yaml')`: Initializes the DatabaseConnector_postgres object with an optional credentials file (`db_creds_2.yaml` by default) specific for PostgreSQL.
+
+2. `read_db_creds(self)`: Reads database credentials from the specified credentials file.
+
+3. `init_db_engine(self)`: Initializes a connection to the PostgreSQL database using the credentials read from the file.
+
+4. `list_db_tables(self)`: Retrieves and returns a DataFrame containing the names of existing tables in the connected PostgreSQL database.
+
+5. `upload_to_db_2(self, pd_dataframe, table_name)`: Creates a new table in the database with the specified name if it doesn't exist and uploads the DataFrame `pd_dataframe` to the table.
+
+#### Supporting Functions
+- `get_type(col_type)`: Returns the SQL data type based on the Python data type of a column in a DataFrame.
+
+### Running the Script
+To execute the script, ensure that all necessary dependencies are installed and provide appropriate input data paths or API endpoints. You can create instances of the `DatabaseConnector` or `DatabaseConnector_postgres` class and call the methods as needed.
 
 
 
