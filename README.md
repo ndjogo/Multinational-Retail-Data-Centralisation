@@ -207,5 +207,35 @@ The Python script `database_utils.py` provides utility functions to interact wit
 To execute the script, ensure that all necessary dependencies are installed and provide appropriate input data paths or API endpoints. You can create instances of the `DatabaseConnector` or `DatabaseConnector_postgres` class and call the methods as needed.
 
 
+### Date Data Upload Python Script
 
+The Python script `date_data_upload.py` is responsible for uploading date-related data to a database after performing some preprocessing. Here's a breakdown of the code:
+
+#### Importing Libraries
+- The script imports necessary libraries such as `pandas` and custom modules (`data_cleaning`, `DatabaseConnector`) for data manipulation and database interaction.
+
+#### Supporting Function
+- `convert_time(x)`: Converts time strings to time objects. If the input string does not contain a colon (':'), it returns 0; otherwise, it returns the time object.
+
+#### Main Function
+1. **Data Retrieval and Preprocessing**:
+    - Data is retrieved from a JSON file hosted at the specified link and stored in a DataFrame (`date_data`).
+    - The DataFrame is converted to a CSV file named `test_timestamp.csv`.
+    - Time strings in the 'timestamp' column are converted to time objects using the `convert_time` function and stored back in the DataFrame. The updated DataFrame is saved to a CSV file named `test_timestamp_updated.csv`.
+    - The data types of 'month', 'year', and 'day' columns are converted to integers using the `convert_to_num` function from the `data_cleaning` module.
+    - NaN values are dropped from the DataFrame.
+
+2. **Database Interaction**:
+    - An instance of the `DatabaseConnector` class is created.
+    - Existing tables in the database are listed using the `list_db_tables` method.
+    - The preprocessed DataFrame `date_data` is uploaded to the database with the table name 'dim_date_times' using the `upload_to_db_2` method of the `DatabaseConnector` class.
+
+### Running the Script
+To execute the script, ensure that all necessary dependencies are installed. Additionally, ensure that the required data files and database credentials are accessible.
+
+```python
+python date_data_upload.py
+```
+
+The script will retrieve data from the specified JSON file link, preprocess it, and upload it to the database. 
 
